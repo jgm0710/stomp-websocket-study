@@ -22,10 +22,16 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.kafka:spring-kafka")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.kafka:spring-kafka-test")
 
     implementation("org.webjars:stomp-websocket:2.3.3-1")
+    // https://mvnrepository.com/artifact/org.webjars/webjars-locator
+    implementation("org.webjars:webjars-locator:0.47")
+    implementation("org.webjars:sockjs-client:1.1.2")
+
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
 }
 
 tasks.withType<KotlinCompile> {

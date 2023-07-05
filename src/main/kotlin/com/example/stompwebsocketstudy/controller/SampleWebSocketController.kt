@@ -1,37 +1,25 @@
 package com.example.stompwebsocketstudy.controller
 
-import org.springframework.messaging.handler.annotation.MessageMapping
-import org.springframework.messaging.handler.annotation.SendTo
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.messaging.simp.SimpMessagingTemplate
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Controller
-import org.springframework.web.util.HtmlUtils
+import java.time.OffsetDateTime
 
 @Controller
 class SampleWebSocketController {
 
-    @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
-    @Throws(Exception::class)
-    fun greeting(message: HelloMessage): Greeting? {
-        Thread.sleep(1000) // simulated delay
-        return Greeting("Hello, " + message.name?.let { HtmlUtils.htmlEscape(it) } + "!")
-    }
+//    @Autowired
+//    private lateinit var messagingTemplate: SimpMessagingTemplate
+//
+//    @Scheduled(fixedDelay = 1000)
+//    fun sendMessages() {
+//        val message = Greeting("Hello, world! Now is : ${OffsetDateTime.now()}") // 전송할 메시지 생성
+//        messagingTemplate.convertAndSend("/topic/greetings", message) // 해당 주제로 메시지 전송
+//    }
 }
 
-class HelloMessage {
-    var name: String? = null
-
-    constructor()
-    constructor(name: String?) {
-        this.name = name
-    }
-}
-
-class Greeting {
-    var content: String? = null
+class Greeting(content: String?) {
+    var content: String? = content
         private set
-
-    constructor()
-    constructor(content: String?) {
-        this.content = content
-    }
 }

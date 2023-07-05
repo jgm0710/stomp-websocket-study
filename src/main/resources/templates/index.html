@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <!-- 필요한 스크립트 및 스타일시트를 추가 -->
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <!-- ... -->
+</head>
+<body>
+<h1 id="connectionStatus"></h1> <!-- 연결 상태를 표시할 요소 -->
+<ul id="messages"></ul> <!-- 수신된 메시지를 표시할 목록 요소 -->
+
+<form id="messageForm">
+    <input type="text" id="messageInput" />
+    <button type="submit">Send</button>
+</form>
+
+<script th:inline="javascript">
+    // STOMP 클라이언트 초기화 및 연결 설정
+    var stompClient = null;
+
+    function connect() {
+        var socket = new SockJS('http://localhost:8080/socket');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function(frame) {
+            console.log('Connected: ' + frame);
+            // 서버에 연결되면 실행할 코드
+            document.getElementById("connectionStatus").innerText = "Connected"; // 연결 상태를 화면에 표시
+
+            // 특정 주제를 구독
+            stompClient.subscribe('/topic/greetings', function(message) {
+                const result = JSON.parse(message.body);
+                console.log('message');
+                console.log(result.content);
+                handleMessage(result.content); // 메시지 핸들링 함수 호출
+            });
+        });
+    }
+
+    function handleMessage(message) {
+        var messageList = document.getElementById("messages");
+        var li = document.createElement("li");
+        li.appendChild(document.createTextNode(message));
+        messageList.appendChild(li);
+    }
+
+    function sendMessage(event) {
+        event.preventDefault();
+        var messageInput = document.getElementById("messageInput");
+        var message = messageInput.value;
+        if (message.trim() !== '') {
+            stompClient.send("/app/hello", {}, JSON.stringify({ 'name': message }));
+            messageInput.value = '';
+        }
+    }
+
+    // 연결 시작
+    connect();
+
+    // 폼 제출 이벤트 리스너 등록
+    document.getElementById("messageForm").addEventListener("submit", sendMessage);
+</script>
+</body>
+</html>
